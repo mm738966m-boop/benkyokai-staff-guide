@@ -47,6 +47,9 @@ section{display:flex;flex-direction:column;gap:16px}
 .gold{background:var(--goldbg);border:2px solid var(--goldfill);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px}
 .gold b{color:var(--gold)}
 strong,b{font-weight:900}
+.nb{display:inline-block}
+h1,h2,h3,.flow b,.q,.gold p{word-break:auto-phrase;text-wrap:balance;line-break:strict}
+p,small,.note,.steps div,.check div{word-break:auto-phrase;text-wrap:pretty;line-break:strict}
 .mk{background:linear-gradient(transparent 62%,var(--goldbg) 62%);font-weight:900}
 
 /* しくみの流れ */
@@ -110,11 +113,11 @@ figure img{border:2px solid var(--line);border-radius:14px;width:100%;max-width:
 <header class="hero">
   <div class="txt">
     <span class="tag">尾道さんへ</span>
-    <h1>空いている時間に、勉強会の予約が自動で入ります</h1>
+    <h1><span class="nb">空いている時間に、</span><span class="nb">勉強会の予約が</span><span class="nb">自動で入ります</span></h1>
     <div class="lead">
       <p>やることは1つだけです。</p>
-      <p><span class="mk">Googleカレンダーを、いつもどおり使うこと。</span></p>
-      <p>森川に日程を伝える必要は、もうありません。</p>
+      <p><span class="nb mk">Googleカレンダーを、</span><span class="nb mk">いつもどおり使うこと。</span></p>
+      <p><span class="nb">森川に日程を伝える必要は、</span><span class="nb">もうありません。</span></p>
     </div>
   </div>
   <img src="img/mascot_invite.webp" alt="そろばんを持ったロボットが両手を広げている">
