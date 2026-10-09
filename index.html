@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>勉強会 担当ガイド</title>
+<meta name="description" content="空いている時間に、勉強会の予約が自動で入るしくみと、Googleカレンダーの使い方をまとめました。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="勉強会 担当ガイド">
+<meta property="og:description" content="空いている時間に、勉強会の予約が自動で入るしくみと、Googleカレンダーの使い方をまとめました。">
+<meta property="og:url" content="https://mm738966m-boop.github.io/benkyokai-staff-guide/">
+<meta property="og:image" content="https://mm738966m-boop.github.io/benkyokai-staff-guide/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>html{color-scheme:light}body{margin:0}img{max-width:100%}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* layout: 1カラムの手順書。上から順に読めば準備が終わる。図は「1日の見え方」を軸に繰り返す */
+:root{
+  --teal:#0E7C86; --deep:#0A5A62; --ink:#1C3236; --ink2:#4A6468; --soft:#EEF6F7; --line:#D5E4E6;
+  --gold:#A87A1F; --goldfill:#D9A441; --goldbg:#FBF4E3; --bg:#fff; --card:#fff;
+  --ng:#B4452F; --ngbg:#FBEDE9; --on-teal:#fff; --phone:#F6FAFA;
+  --font:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --teal:#4FC3CC; --deep:#8ADDE3; --ink:#E8F2F3; --ink2:#A9C0C3; --soft:#16292C; --line:#2C4448;
+  --gold:#E2B55A; --goldfill:#D9A441; --goldbg:#2E2714; --bg:#0F1C1E; --card:#152528;
+  --ng:#F08C76; --ngbg:#34201B; --on-teal:#06282B; --phone:#1B2F32; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --teal:#4FC3CC; --deep:#8ADDE3; --ink:#E8F2F3; --ink2:#A9C0C3; --soft:#16292C; --line:#2C4448;
+  --gold:#E2B55A; --goldfill:#D9A441; --goldbg:#2E2714; --bg:#0F1C1E; --card:#152528;
+  --ng:#F08C76; --ngbg:#34201B; --on-teal:#06282B; --phone:#1B2F32; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:18px;font-weight:500;line-height:1.9;padding-inline:20px;padding-block:28px 64px}
+.wrap{max-width:720px;margin-inline:auto;display:flex;flex-direction:column;gap:44px}
+h1{font-size:clamp(28px,7vw,38px);font-weight:900;line-height:1.4;margin:0;text-wrap:balance;color:var(--deep)}
+h2{font-size:clamp(23px,5.4vw,28px);font-weight:900;line-height:1.45;margin:0 0 14px;text-wrap:balance}
+h3{font-size:20px;font-weight:700;margin:0 0 8px;line-height:1.5}
+p{margin:0}
+section{display:flex;flex-direction:column;gap:16px}
+.lead{display:flex;flex-direction:column;gap:6px}
+.tag{display:inline-block;align-self:flex-start;background:var(--teal);color:var(--on-teal);font-weight:700;font-size:15px;padding:2px 14px;border-radius:999px}
+.hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.hero .txt{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.hero img{width:150px;height:auto;flex:0 0 auto;margin-inline:auto}
+.box{background:var(--soft);border-radius:16px;padding:20px}
+.gold{background:var(--goldbg);border:2px solid var(--goldfill);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.gold b{color:var(--gold)}
+strong,b{font-weight:900}
+.mk{background:linear-gradient(transparent 62%,var(--goldbg) 62%);font-weight:900}
+
+/* しくみの流れ */
+.flow{display:flex;flex-direction:column;gap:10px;list-style:none;margin:0;padding:0;counter-reset:f}
+.flow li{counter-increment:f;display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px}
+.flow li::before{content:counter(f);width:44px;height:44px;border-radius:50%;background:var(--teal);color:var(--on-teal);font-weight:900;font-size:22px;display:grid;place-items:center;line-height:1}
+.flow li>div{min-width:0}
+.flow small,.note{font-size:15px;color:var(--ink2);line-height:1.75}
+.you{border-color:var(--goldfill)!important;background:var(--goldbg)!important}
+.you::before{background:var(--goldfill)!important;color:#3A2A05!important}
+
+/* 1日の見え方 */
+.day{border:2px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.day .cap{background:var(--soft);padding:10px 16px;font-weight:700;font-size:16px}
+.row{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:center;padding:12px 16px;border-top:2px solid var(--line)}
+.row .t{font-weight:900;font-variant-numeric:tabular-nums;font-size:19px}
+.row .c{min-width:0;display:flex;flex-direction:column;gap:4px}
+.ev{border-radius:10px;padding:6px 12px;font-weight:700;font-size:16px;line-height:1.5}
+.ev.busy{background:var(--soft);border-left:6px solid var(--teal)}
+.ev.empty{border:2px dashed var(--line);color:var(--ink2)}
+.res{font-size:15.5px;font-weight:900}
+.res.ok{color:var(--gold)} .res.no{color:var(--ink2)}
+
+/* 手順 */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;counter-reset:s}
+.steps>li{counter-increment:s;display:grid;grid-template-columns:36px 1fr;gap:12px}
+.steps>li::before{content:counter(s);width:36px;height:36px;border-radius:50%;border:3px solid var(--teal);color:var(--teal);font-weight:900;display:grid;place-items:center;line-height:1;font-size:18px}
+.steps>li>div{min-width:0;padding-top:1px}
+.key{display:inline-block;border:2px solid var(--line);border-radius:8px;padding:0 9px;font-weight:700;background:var(--card);line-height:1.6}
+a{color:var(--teal);font-weight:700;word-break:break-all}
+a:focus-visible{outline:3px solid var(--goldfill);outline-offset:2px}
+
+/* スマホ画面のイメージ */
+.phones{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.phone{flex:1 1 220px;max-width:280px;min-width:0;background:var(--phone);border:3px solid var(--ink2);border-radius:26px;padding:16px 14px;display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.6}
+.phone .bar{font-weight:900;font-size:16px;display:flex;justify-content:space-between;gap:8px}
+.phone .f{border-bottom:2px solid var(--line);padding:6px 2px;display:flex;justify-content:space-between;gap:8px}
+.phone .f span:last-child{font-weight:700;text-align:right}
+.phone .hl{background:var(--goldbg);border:2px solid var(--goldfill);border-radius:10px;padding:6px 8px}
+.fab{align-self:flex-end;width:52px;height:52px;border-radius:16px;background:var(--teal);color:var(--on-teal);display:grid;place-items:center;font-size:30px;font-weight:700;line-height:1}
+.imgcap{font-size:14px;color:var(--ink2);text-align:center}
+figure{margin:0;display:flex;flex-direction:column;gap:8px}
+figure img{border:2px solid var(--line);border-radius:14px;width:100%;max-width:380px;margin-inline:auto;display:block}
+
+/* 困ったとき */
+.qa{display:flex;flex-direction:column;gap:12px}
+.qa>div{border:2px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--card)}
+.qa .q{font-weight:900;color:var(--deep)}
+.check{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.check li{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start}
+.check li::before{content:"";width:26px;height:26px;border:3px solid var(--teal);border-radius:8px;margin-top:4px}
+.end{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.end img{width:120px;height:auto;margin-inline:auto}
+.end>div{flex:1 1 280px;min-width:0}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="txt">
+    <span class="tag">尾道さんへ</span>
+    <h1>空いている時間に、勉強会の予約が自動で入ります</h1>
+    <div class="lead">
+      <p>やることは1つだけです。</p>
+      <p><span class="mk">Googleカレンダーを、いつもどおり使うこと。</span></p>
+      <p>森川に日程を伝える必要は、もうありません。</p>
+    </div>
+  </div>
+  <img src="img/mascot_invite.webp" alt="そろばんを持ったロボットが両手を広げている">
+</header>
+
+<section>
+  <h2>しくみは4コマです</h2>
+  <ol class="flow">
+    <li><div><b>お客さまが、日時を選んで申し込む</b><br><small>申込フォームに、担当者の名前は出ません。</small></div></li>
+    <li><div><b>システムが、尾道さんのGoogleカレンダーを見る</b><br><small>その時間に予定がなければ「入れる」と判断します。</small></div></li>
+    <li><div><b>空いていれば、尾道さんが担当になる</b><br><small>尾道さんと森川の両方が空いているときは、尾道さんが優先です。尾道さんに予定があれば、森川に回ります。<br>朝9時の回は、尾道さんだけが担当です（森川は10時から）。</small></div></li>
+    <li class="you"><div><b>尾道さんのカレンダーに、予定とZoomリンクが入る</b><br><small>当日は、その予定を開いてZoomに入るだけです。</small></div></li>
+  </ol>
+  <figure>
+    <img src="img/form2.jpg" alt="お客さまが見る申込フォーム。カレンダーの、予約できる日に丸印がついている">
+    <figcaption class="imgcap">お客さまに見える申込フォーム（準備中の画面）。丸のついた日を押すと、時間が選べます</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>予約が入るのは、9:00〜22:00 の間です</h2>
+  <div class="box">
+    <p><b>1回60分。9:00から1時間ごとに、1日13回分</b></p>
+    <p class="note">9:00／10:00／11:00 … 20:00／21:00 に始まります。毎日（土日・祝日も）。<br>お客さまが選べるのは、8日先までです。<br>申込の締め切りは、開始の12時間前です。<br>たとえば夜8時の回は、当日の朝8時まで予約が入ります。</p>
+  </div>
+  <p>それぞれの回に、カレンダーの予定が重なっているかどうかで決まります。</p>
+  <div class="day">
+    <div class="cap">ある1日の例（尾道さんのカレンダー）</div>
+    <div class="row"><div class="t">9:00</div><div class="c"><div class="ev busy">歯医者 8:30〜10:00</div><div class="res no">予定がある → 予約は入りません</div></div></div>
+    <div class="row"><div class="t">10:00</div><div class="c"><div class="ev empty">何も入っていない</div><div class="res ok">空白 → 予約が入ります</div></div></div>
+    <div class="row"><div class="t">11:00</div><div class="c"><div class="ev empty">何も入っていない</div><div class="res ok">空白 → 予約が入ります</div></div></div>
+    <div class="row"><div class="t">12:00</div><div class="c"><div class="ev busy">勉強会不可 12:00〜22:00</div><div class="res no">予定がある → ここから夜まで、予約は入りません</div></div></div>
+  </div>
+  <p class="note">予定が少しでも重なった回は閉じます。<br>たとえば 10:30〜11:30 の予定があると、10:00の回と11:00の回の2つが閉じます。</p>
+</section>
+
+<section>
+  <div class="gold">
+    <h3>いちばん大事なこと</h3>
+    <p>カレンダーが<b>空白</b>の時間は、「入れます」という意味になります。</p>
+    <p>入れない時間は、予定を入れて閉じておいてください。</p>
+    <p>仕事の予定だけでなく、通院・送り迎え・休みたい時間も同じです。</p>
+  </div>
+</section>
+
+<section>
+  <h2>入れない時間を閉じる（スマホで1分）</h2>
+  <ol class="steps">
+    <li><div>Googleカレンダーを開きます。<br>アプリが入っていなければ、こちらから開けます。<br><a href="https://calendar.google.com/" target="_blank" rel="noopener">https://calendar.google.com/</a></div></li>
+    <li><div>右下の <span class="key">＋</span> を押して、<span class="key">予定</span> を選びます。</div></li>
+    <li><div>タイトルに「勉強会不可」と入れます。<br><span class="note">自分がわかる言葉なら何でも大丈夫です。お客さまには見えません。</span></div></li>
+    <li><div><b>開始と終了の時間</b>を入れます。<br><span class="note">例：夕方から入れない日は、17:00〜22:00。</span></div></li>
+    <li><div>右上の <span class="key">保存</span> を押します。これで、その時間は閉じます。</div></li>
+  </ol>
+  <div class="phones">
+    <div class="phone" aria-label="カレンダーの右下にプラスのボタンがある画面のイメージ">
+      <div class="bar"><span>10月</span><span>≡</span></div>
+      <div class="f"><span>12 月</span><span>—</span></div>
+      <div class="f"><span>13 火</span><span>—</span></div>
+      <div class="f"><span>14 水</span><span>—</span></div>
+      <div class="fab hl">＋</div>
+    </div>
+    <div class="phone" aria-label="予定の入力画面のイメージ">
+      <div class="bar"><span>✕</span><span class="hl">保存</span></div>
+      <div class="f hl"><span>タイトル</span><span>勉強会不可</span></div>
+      <div class="f"><span>終日</span><span>オフ</span></div>
+      <div class="f hl"><span>開始</span><span>17:00</span></div>
+      <div class="f hl"><span>終了</span><span>22:00</span></div>
+      <div class="f"><span>繰り返し</span><span>しない</span></div>
+    </div>
+  </div>
+  <p class="imgcap">画面のイメージです。実際の見た目は、機種やアプリの版で少し違います。</p>
+  <div class="box">
+    <h3>「終日」はオフのままにしてください</h3>
+    <p class="note">終日の予定は、空いている時間として扱われることがあります。<br>1日まるごと入れない日は、9:00〜22:00 のように時間を入れて閉じてください。</p>
+  </div>
+  <div class="box">
+    <h3>「予定あり」のままにしてください</h3>
+    <p class="note">予定の画面に「予定あり／予定なし」を選ぶところがあります。<br>「予定なし」にすると、その時間は空きとして扱われ、予約が入ります。<br>ふつうに作った予定は「予定あり」になっているので、変えなければ大丈夫です。</p>
+  </div>
+</section>
+
+<section>
+  <h2>おすすめ：先に全部閉じて、入れる日だけ開ける</h2>
+  <div class="lead">
+    <p>予定の入れ忘れが心配なら、この使い方が安心です。</p>
+    <p>入れ忘れても、予約が入ることはありません。</p>
+  </div>
+  <ol class="steps">
+    <li><div>上と同じ手順で「勉強会不可」を作ります。時間は 9:00〜22:00。</div></li>
+    <li><div><span class="key">繰り返し</span> を <span class="key">毎日</span> にして保存します。<br><span class="note">これで、毎日ぜんぶ閉じた状態になります。</span></div></li>
+    <li><div><b>入れる日</b>が決まったら、その日の「勉強会不可」を押します。</div></li>
+    <li><div><span class="key">削除</span> →「<b>この予定のみ</b>」を選びます。<br><span class="note">「すべての予定」を選ぶと、毎日の分が全部消えます。</span></div></li>
+    <li><div>その日は、9:00〜22:00 がまるごと開きます。<br><span class="note">午後だけ入れる日は、消さずに時間を 9:00〜13:00 に変えます。13:00 からの回が開きます。</span></div></li>
+  </ol>
+</section>
+
+<section>
+  <h2>予約が入ったら</h2>
+  <ol class="steps">
+    <li><div>カレンダーに「<b>〇〇さん：お金の増やし方オンライン勉強会</b>」という予定が入ります。</div></li>
+    <li><div>予定を開くと、<b>Zoomのリンク</b>と、お客さまのお名前が入っています。</div></li>
+    <li><div>当日は、そのリンクからZoomに入ります。</div></li>
+  </ol>
+  <p class="note">個別相談の予約も、これからは同じカレンダー（尾道さんのメインのカレンダー）に入ります。<br>これまでの「クラファン個別相談」のカレンダーには入らなくなります。</p>
+</section>
+
+<section>
+  <h2>困ったとき</h2>
+  <div class="qa">
+    <div><p class="q">予約が入ったあとで、行けなくなった</p><p>早めに森川へ連絡してください。<br>カレンダーの予定を消しても、お客さまの予約は取り消されません。</p></div>
+    <div><p class="q">入れるはずの日に、予約が入らない</p><p>その時間に、ほかの予定が重なっていないか見てください。<br>9:00の回なら、9:00〜10:00 に少しでも重なると閉じます。</p></div>
+    <div><p class="q">入れない日に、予約が入ってしまった</p><p>大丈夫です。森川へ連絡してください。<br>森川が代わるか、お客さまに日程の変更をお願いします。</p></div>
+    <div><p class="q">カレンダーの中身は、森川やお客さまに見える？</p><p>見えるのは「予定がある時間」だけです。<br>予定のタイトルや内容は、森川にもお客さまにも見えません。</p></div>
+    <div><p class="q">朝9:00より前や、夜22:00より後も受けたい</p><p>森川へ伝えてください。受付の時間を広げられます。</p></div>
+  </div>
+</section>
+
+<section class="box">
+  <h2>はじめる前の確認</h2>
+  <ul class="check">
+    <li><div>Googleカレンダーをスマホで開ける</div></li>
+    <li><div>入れない時間に、時間つきの予定を入れた（または「勉強会不可」を毎日で入れた）</div></li>
+    <li><div>「9:00〜22:00 の空白には予約が入る」と覚えた</div></li>
+  </ul>
+</section>
+
+<footer class="end">
+  <img src="img/mascot_base.webp" alt="そろばんを持ったロボットが手を上げている">
+  <div class="lead">
+    <p>はじまる日は、森川からお知らせします。</p>
+    <p>わからないところは、そのままで大丈夫です。<br>最初の1回は、一緒に画面を見ながら確かめましょう。</p>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
