@@ -63,7 +63,7 @@ function render(){
     var d=new Date(+m[1],+m[2]-1,n),v=(inMonth&&c.classList.contains('calendar-day-nothing')&&d>=t0&&d<t1)?'full':'';
     if((c.getAttribute('data-fx')||'')!==v){if(v)c.setAttribute('data-fx',v);else c.removeAttribute('data-fx')}});
 }
-var q=false;function kick(){if(q)return;q=true;requestAnimationFrame(function(){q=false;render()})}
+var q=false;function kick(){if(q)return;q=true;setTimeout(function(){q=false;render()},40)}
 function boot(){var app=document.getElementById('app');if(!app)return;new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t.id==='fx-slots'||(t.closest&&t.closest('#fx-slots')))continue;if(ms[i].type==='attributes'&&ms[i].attributeName!=='class')continue;kick();return}}).observe(app,{childList:true,subtree:true,attributes:true,attributeFilter:['class'],characterData:true});render()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
