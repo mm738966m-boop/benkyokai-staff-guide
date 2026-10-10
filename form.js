@@ -44,13 +44,14 @@ function render(){
   var sch=document.querySelector('#app .schedule');if(!sch)return;
   var box=document.getElementById('fx-slots');
   var real={};[].forEach.call(sch.querySelectorAll('button.calendar-time'),function(b){real[b.textContent.trim().slice(0,5)]=b});
-  var selected=!!sch.querySelector('.selected-day');
+  var selDay=sch.querySelector('.selected-day'),selected=!!selDay;
+  var pk=((document.querySelector('#app .card-body table')||{}).textContent||'').match(/\d{4}\/\d{2}\/(\d{2})[^\d]*(\d{2}:\d{2})-/),picked=(pk&&selDay&&parseInt(pk[1],10)===parseInt((selDay.firstElementChild||selDay).textContent,10))?pk[2]:'';
   var parts=[],state=[];
-  if(selected){HOURS.forEach(function(h){var k=pad(h)+':00',b=real[k];var on=b&&(b.classList.contains('active')||(b.nextElementSibling&&b.nextElementSibling.checked));state.push(k+(b?(on?'S':'O'):'X'));
+  if(selected){HOURS.forEach(function(h){var k=pad(h)+':00',b=real[k];var on=!!b&&picked===k;state.push(k+(b?(on?'S':'O'):'X'));
     var label=k+'〜'+pad(h+1)+':00';
     parts.push(b?'<button type="button" class="fx-slot fx-ok'+(on?' fx-on':'')+'" data-k="'+k+'">'+label+'<span>'+(on?'選択中':'予約できます')+'</span></button>':'<div class="fx-slot fx-full" aria-disabled="true">'+label+'<span>満席</span></div>')})}
   var s=state.join(',');
-  if(!box){box=document.createElement('div');box.id='fx-slots';sch.appendChild(box);box.addEventListener('click',function(e){var t=e.target.closest('.fx-ok');if(!t)return;var r=document.querySelector('#app .schedule').querySelectorAll('button.calendar-time');[].forEach.call(r,function(b){if(b.textContent.trim().slice(0,5)===t.getAttribute('data-k'))b.click()});setTimeout(render,60)});sig=''}
+  if(!box){box=document.createElement('div');box.id='fx-slots';sch.appendChild(box);box.addEventListener('click',function(e){var t=e.target.closest('.fx-ok');if(!t)return;var r=document.querySelector('#app .schedule').querySelectorAll('button.calendar-time');[].forEach.call(r,function(b){if(b.textContent.trim().slice(0,5)===t.getAttribute('data-k'))b.click()});setTimeout(render,200)});sig=''}
   if(s!==sig){sig=s;box.innerHTML=parts.join('')}
   /* 受付期間内で空きのない日に「満席」 */
   var head=(document.querySelector('#app .calendar-head')||{}).textContent||'',m=head.match(/(\d{4})年(\d{1,2})月/);if(!m)return;
@@ -63,6 +64,6 @@ function render(){
     if((c.getAttribute('data-fx')||'')!==v){if(v)c.setAttribute('data-fx',v);else c.removeAttribute('data-fx')}});
 }
 var q=false;function kick(){if(q)return;q=true;requestAnimationFrame(function(){q=false;render()})}
-function boot(){var app=document.getElementById('app');if(!app)return;new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t.id==='fx-slots'||(t.closest&&t.closest('#fx-slots')))continue;if(ms[i].type==='attributes'&&ms[i].attributeName!=='class')continue;kick();return}}).observe(app,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});render()}
+function boot(){var app=document.getElementById('app');if(!app)return;new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t.id==='fx-slots'||(t.closest&&t.closest('#fx-slots')))continue;if(ms[i].type==='attributes'&&ms[i].attributeName!=='class')continue;kick();return}}).observe(app,{childList:true,subtree:true,attributes:true,attributeFilter:['class'],characterData:true});render()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
