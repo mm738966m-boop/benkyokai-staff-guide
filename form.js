@@ -84,26 +84,32 @@ function hookConfirm(){
     if(form.__native)return;
     if(form.checkValidity&&!form.checkValidity())return;
     ev.preventDefault();ev.stopImmediatePropagation();
-    var nativeGo=function(){form.__native=true;HTMLFormElement.prototype.submit.call(form)};
     var btn=form.querySelector('button[type=submit]');if(btn)btn.disabled=true;
-    fetch(form.action,{method:'POST',body:new FormData(form),credentials:'same-origin'}).then(function(r){return r.text().then(function(h){return {u:r.url,h:h}})}).then(function(o){
-      var doc=new DOMParser().parseFromString(o.h,'text/html'),cf=doc.querySelector('form#form');
-      if(!/\/confirm$/.test(o.u.split('?')[0])||!cf||!cf.querySelector('button[value=submit]')){nativeGo();return}
+    var fr=document.createElement('iframe');fr.name='fxcf';fr.setAttribute('aria-hidden','true');fr.style.cssText='position:absolute;width:1px;height:1px;border:0;opacity:0;pointer-events:none;left:-9999px';
+    document.body.appendChild(fr);
+    var settled=false,oldTarget=form.getAttribute('target');
+    function restore(){if(oldTarget===null)form.removeAttribute('target');else form.setAttribute('target',oldTarget);if(btn)btn.disabled=false}
+    function nativeGo(){if(settled)return;settled=true;try{fr.remove()}catch(e){}restore();form.__native=true;HTMLFormElement.prototype.submit.call(form)}
+    var timer=setTimeout(nativeGo,9000);
+    fr.addEventListener('load',function(){
+      if(settled)return;
+      var doc,cf,go;
+      try{doc=fr.contentDocument;if(!doc||!/\/confirm$/.test(fr.contentWindow.location.pathname))throw 0;cf=doc.querySelector('form#form');go=cf&&cf.querySelector('button[value=submit]');if(!go)throw 0}catch(e){clearTimeout(timer);nativeGo();return}
       var rows=[];[].forEach.call(doc.querySelectorAll('table.d-md-table tr'),function(tr){var th=tr.querySelector('th'),td=tr.querySelector('td');if(th&&td)rows.push([th.textContent.trim(),td.textContent.replace(/[ \t]+/g,' ').replace(/\s*\n\s*/g,'\n').trim()])});
-      if(!rows.length){nativeGo();return}
+      if(!rows.length){clearTimeout(timer);nativeGo();return}
+      clearTimeout(timer);settled=true;restore();
       var when=rows[0],rest=rows.slice(1);
       var ov=document.createElement('div');ov.id='fx-confirm';
       ov.innerHTML='<div class="fxc"><h2>この内容で申し込みますか？</h2><p>まだ申し込みは終わっていません。下のボタンを押すと完了します。</p><div class="fx-when">'+esc(when[1])+'</div><dl>'+rest.map(function(r){return '<dt>'+esc(r[0])+'</dt><dd>'+(esc(r[1])||'（なし）')+'</dd>'}).join('')+'</dl><button type="button" class="fx-go">この内容で申し込む</button><button type="button" class="fx-back">戻って直す</button></div>';
-      document.body.appendChild(ov);window.scrollTo(0,0);if(btn)btn.disabled=false;
-      ov.querySelector('.fx-back').addEventListener('click',function(){ov.remove()});
+      document.body.appendChild(ov);window.scrollTo(0,0);
+      ov.querySelector('.fx-back').addEventListener('click',function(){ov.remove();try{fr.remove()}catch(e){}});
       ov.querySelector('.fx-go').addEventListener('click',function(){
         this.disabled=true;this.textContent='送信しています…';
-        var f2=document.createElement('form');f2.method='post';f2.action=cf.getAttribute('action');f2.style.display='none';
-        [].forEach.call(cf.querySelectorAll('input[type=hidden]'),function(i){var n=document.createElement('input');n.type='hidden';n.name=i.name;n.value=i.value;f2.appendChild(n)});
-        var a=document.createElement('input');a.type='hidden';a.name='action';a.value='submit';f2.appendChild(a);
-        document.body.appendChild(f2);f2.submit();
+        try{cf.setAttribute('target','_top');go.click()}catch(e){form.__native=true;HTMLFormElement.prototype.submit.call(form)}
       });
-    }).catch(function(){nativeGo()});
+    });
+    form.setAttribute('target','fxcf');
+    HTMLFormElement.prototype.submit.call(form);
   },true);
 }
 var q=false;function kick(){if(q)return;q=true;setTimeout(function(){q=false;render()},40)}
