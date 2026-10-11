@@ -35,6 +35,19 @@ var css=''
 +'#app label{font-weight:900;font-size:17px}'
 +'#app .form-control{font-size:18px;font-weight:500;border:2px solid #D5E4E6;border-radius:12px;min-height:52px;font-family:inherit;color:#1C3236}'
 +'#app .form-control:focus{border-color:#0E7C86;box-shadow:0 0 0 3px rgba(14,124,134,.18)}'
++'#app .custom-control{padding:10px 12px 10px 46px;border:2px solid #D5E4E6;border-radius:12px;margin-bottom:8px;background:#fff}'
++'#app .custom-control-label{font-weight:700;font-size:17px;display:block;cursor:pointer}'
++'#app .custom-control-label::before,#app .custom-control-label::after{width:22px;height:22px;left:-32px;top:4px}'
++'#app .custom-control-input:checked~.custom-control-label::before{background:#0E7C86;border-color:#0E7C86}'
++'#fx-confirm{position:fixed;inset:0;background:#EEF6F7;z-index:9999;overflow:auto;padding:20px 14px 40px}'
++'#fx-confirm .fxc{max-width:640px;margin:0 auto;background:#fff;border-radius:22px;border-top:6px solid #D9A441;box-shadow:0 6px 24px rgba(10,90,98,.10);padding:24px 18px 28px}'
++'#fx-confirm h2{font-size:24px;font-weight:900;color:#0A5A62;margin:0 0 6px}#fx-confirm p{margin:0 0 16px;font-size:16px;color:#4A6468}'
++'#fx-confirm dl{margin:0 0 20px}#fx-confirm dt{font-size:14.5px;font-weight:700;color:#0E7C86;margin-top:14px}#fx-confirm dd{margin:2px 0 0;font-size:19px;font-weight:700;border-bottom:2px solid #D5E4E6;padding-bottom:10px;white-space:pre-wrap;word-break:break-word}'
++'#fx-confirm .fx-when{background:#FBF4E3;border:2px solid #D9A441;border-radius:14px;padding:12px 14px;font-size:22px;font-weight:900;color:#0A5A62;margin-bottom:6px}'
++'#fx-confirm button{display:block;width:100%;font:inherit;border-radius:999px;cursor:pointer}'
++'#fx-confirm .fx-go{background:#0E7C86;color:#fff;border:0;font-weight:900;font-size:21px;min-height:62px;box-shadow:0 5px 0 #0A5A62}'
++'#fx-confirm .fx-back{background:#fff;color:#0E7C86;border:2px solid #0E7C86;font-weight:700;font-size:17px;min-height:50px;margin-top:16px}'
++'#fx-confirm .fx-go[disabled]{opacity:.6}'
 +'#app button[type=submit],#app .btn-success,#app .btn-primary{background:#0E7C86!important;border:0!important;border-radius:999px!important;font-weight:900;font-size:20px;min-height:60px;box-shadow:0 5px 0 #0A5A62;font-family:inherit}';
 var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
 
@@ -63,7 +76,37 @@ function render(){
     var d=new Date(+m[1],+m[2]-1,n),v=(inMonth&&c.classList.contains('calendar-day-nothing')&&d>=t0&&d<t1)?'full':'';
     if((c.getAttribute('data-fx')||'')!==v){if(v)c.setAttribute('data-fx',v);else c.removeAttribute('data-fx')}});
 }
+/* 確認画面を、このページの中に同じデザインで出す（うまくいかないときは標準の確認画面へ進む） */
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function hookConfirm(){
+  var form=document.querySelector('#app form');if(!form||form.__fx)return;form.__fx=true;
+  form.addEventListener('submit',function(ev){
+    if(form.__native)return;
+    if(form.checkValidity&&!form.checkValidity())return;
+    ev.preventDefault();ev.stopImmediatePropagation();
+    var nativeGo=function(){form.__native=true;HTMLFormElement.prototype.submit.call(form)};
+    var btn=form.querySelector('button[type=submit]');if(btn)btn.disabled=true;
+    fetch(form.action,{method:'POST',body:new FormData(form),credentials:'same-origin'}).then(function(r){return r.text().then(function(h){return {u:r.url,h:h}})}).then(function(o){
+      var doc=new DOMParser().parseFromString(o.h,'text/html'),cf=doc.querySelector('form#form');
+      if(!/\/confirm$/.test(o.u.split('?')[0])||!cf||!cf.querySelector('button[value=submit]')){nativeGo();return}
+      var rows=[];[].forEach.call(doc.querySelectorAll('table.d-md-table tr'),function(tr){var th=tr.querySelector('th'),td=tr.querySelector('td');if(th&&td)rows.push([th.textContent.trim(),td.textContent.replace(/[ \t]+/g,' ').replace(/\s*\n\s*/g,'\n').trim()])});
+      if(!rows.length){nativeGo();return}
+      var when=rows[0],rest=rows.slice(1);
+      var ov=document.createElement('div');ov.id='fx-confirm';
+      ov.innerHTML='<div class="fxc"><h2>この内容で申し込みますか？</h2><p>まだ申し込みは終わっていません。下のボタンを押すと完了します。</p><div class="fx-when">'+esc(when[1])+'</div><dl>'+rest.map(function(r){return '<dt>'+esc(r[0])+'</dt><dd>'+(esc(r[1])||'（なし）')+'</dd>'}).join('')+'</dl><button type="button" class="fx-go">この内容で申し込む</button><button type="button" class="fx-back">戻って直す</button></div>';
+      document.body.appendChild(ov);window.scrollTo(0,0);if(btn)btn.disabled=false;
+      ov.querySelector('.fx-back').addEventListener('click',function(){ov.remove()});
+      ov.querySelector('.fx-go').addEventListener('click',function(){
+        this.disabled=true;this.textContent='送信しています…';
+        var f2=document.createElement('form');f2.method='post';f2.action=cf.getAttribute('action');f2.style.display='none';
+        [].forEach.call(cf.querySelectorAll('input[type=hidden]'),function(i){var n=document.createElement('input');n.type='hidden';n.name=i.name;n.value=i.value;f2.appendChild(n)});
+        var a=document.createElement('input');a.type='hidden';a.name='action';a.value='submit';f2.appendChild(a);
+        document.body.appendChild(f2);f2.submit();
+      });
+    }).catch(function(){nativeGo()});
+  },true);
+}
 var q=false;function kick(){if(q)return;q=true;setTimeout(function(){q=false;render()},40)}
-function boot(){var app=document.getElementById('app');if(!app)return;new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t.id==='fx-slots'||(t.closest&&t.closest('#fx-slots')))continue;if(ms[i].type==='attributes'&&ms[i].attributeName!=='class')continue;kick();return}}).observe(app,{childList:true,subtree:true,attributes:true,attributeFilter:['class'],characterData:true});render()}
+function boot(){var app=document.getElementById('app');if(!app)return;try{hookConfirm()}catch(e){}new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t.id==='fx-slots'||(t.closest&&t.closest('#fx-slots')))continue;if(ms[i].type==='attributes'&&ms[i].attributeName!=='class')continue;kick();return}}).observe(app,{childList:true,subtree:true,attributes:true,attributeFilter:['class'],characterData:true});render()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
