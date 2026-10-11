@@ -96,15 +96,20 @@ function find_(mail) {
   if (last < 2) return null;
   const rows = sh.getRange(2, 1, last - 1, HEAD.length).getValues();
   const now = Date.now();
-  let best = null;
+  const cands = [];
   rows.forEach(function (r) {
     if (r[2] !== mail || r[8] !== '予約' || !r[7]) return;
     const s = r[4] instanceof Date ? r[4].getTime() : null;
     const e = r[5] instanceof Date ? r[5].getTime() : (s ? s + 3600000 : null);
     if (!s || e + 30 * 60000 < now) return;
-    if (!best || s < best.s) best = { s: s, url: r[7] };
+    cands.push({ s: s, got: r[0] instanceof Date ? r[0].getTime() : 0, url: r[7] });
   });
-  return best;
+  if (!cands.length) return null;
+  // もうすぐ始まる（90分以内）予約があればそれ。なければ、いちばん新しく入った予約（取り直しに対応）
+  const soon = cands.filter(function (c) { return c.s - now <= 90 * 60000; }).sort(function (x, y) { return x.s - y.s; });
+  if (soon.length) return soon[0];
+  cands.sort(function (x, y) { return y.got - x.got; });
+  return cands[0];
 }
 
 function doGet(e) {
