@@ -124,14 +124,13 @@ function watchCancels_(sh) {
 
 /** その時間に予定があれば true、なければ false、確認できなければ null */
 function isBusy_(calId, s, e) {
-  const res = UrlFetchApp.fetch('https://www.googleapis.com/calendar/v3/freeBusy', {
-    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
-    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
-    payload: JSON.stringify({ timeMin: s.toISOString(), timeMax: e.toISOString(), items: [{ id: calId }] })
-  });
-  if (res.getResponseCode() !== 200) return null;
-  const c = (JSON.parse(res.getContentText()).calendars || {})[calId];
-  if (!c || c.errors) return null;
+  // サービス「Google Calendar API」（Calendar）を使う
+  let r;
+  try {
+    r = Calendar.Freebusy.query({ timeMin: s.toISOString(), timeMax: e.toISOString(), items: [{ id: calId }] });
+  } catch (err) { Logger.log('freebusy error: ' + err); return null; }
+  const c = (r.calendars || {})[calId];
+  if (!c || (c.errors && c.errors.length)) { Logger.log('freebusy no data: ' + JSON.stringify(c)); return null; }
   return (c.busy || []).length > 0;
 }
 
